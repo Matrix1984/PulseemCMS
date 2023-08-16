@@ -63,7 +63,7 @@ public class ClientDbService : IClientDbService
 
                 returnVal = (int)returnValue.Value;
 
-                clientEntity.ClientID = returnVal > 0 ? Convert.ToInt64(outputIdParam.Value) : 0;
+                clientEntity.ClientID = returnVal == 0 ? Convert.ToInt64(outputIdParam.Value) : 0;
             }
 
             con.Close();
@@ -75,9 +75,9 @@ public class ClientDbService : IClientDbService
         {
             return new Client()
             {
-                Cellphone = request.ClientName,
+                Cellphone = request.Cellphone,
 
-                Email = request.ClientName,
+                Email = request.Email,
 
                 ClientName = request.ClientName,
 

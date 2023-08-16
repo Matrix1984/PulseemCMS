@@ -31,9 +31,7 @@ app.UseRouting();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller}/{action=Index}/{id?}"); 
-
-app.UseExceptionHandler(options => { });
+    pattern: "{controller}/{action=Index}/{id?}");  
 
 if (app.Environment.IsDevelopment()) 
     app.Map("/", () => Results.Redirect("/swagger"));   

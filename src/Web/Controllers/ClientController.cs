@@ -3,9 +3,11 @@ using PulseemCMS.Application.Clients.Commands.CreateClient;
 using PulseemCMS.Application.Clients.Commands.DeleteClient;
 using PulseemCMS.Application.Clients.Commands.UpdateClient;
 using PulseemCMS.Application.Clients.Queries;
+using PulseemCMS.Web.Services;
 
 namespace PulseemCMS.Web.Controllers;
 [Route("api/[controller]")]
+[ApiExceptionFilter]
 [ApiController]
 public class ClientController : ControllerBase
 {

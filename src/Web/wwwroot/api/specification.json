@@ -190,34 +190,24 @@
           "clientName"
         ],
         "properties": {
-          "clientId": {
-            "type": "integer",
-            "format": "int64",
-            "minimum": 1.0
-          },
           "cellphone": {
             "type": "string",
-            "maxLength": 12,
             "minLength": 1,
+            "pattern": "/(9725|05)[0-9]{8,8}/",
             "nullable": false
           },
           "email": {
             "type": "string",
             "maxLength": 500,
             "minLength": 1,
+            "pattern": "^[^@]+@[^@]+$",
             "nullable": false
           },
           "clientName": {
             "type": "string",
-            "maxLength": 100,
             "minLength": 1,
+            "pattern": "/[A-Za-z]{1,100}/",
             "nullable": false
-          },
-          "emailStatus": {
-            "type": "boolean"
-          },
-          "smsStatus": {
-            "type": "boolean"
           }
         }
       },
@@ -249,20 +239,21 @@
           },
           "cellphone": {
             "type": "string",
-            "maxLength": 12,
             "minLength": 1,
+            "pattern": "/(9725|05)[0-9]{8,8}/",
             "nullable": false
           },
           "email": {
             "type": "string",
             "maxLength": 500,
             "minLength": 1,
+            "pattern": "^[^@]+@[^@]+$",
             "nullable": false
           },
           "clientName": {
             "type": "string",
-            "maxLength": 100,
             "minLength": 1,
+            "pattern": "/[A-Za-z]{1,100}/",
             "nullable": false
           },
           "emailStatus": {
