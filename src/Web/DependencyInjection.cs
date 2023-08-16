@@ -1,9 +1,5 @@
-﻿ 
+﻿
 using Microsoft.AspNetCore.Mvc;
-
-using NSwag;
-using NSwag.Generation.Processors.Security;
-using PulseemCMS.Domain.AppSettings;
 using ZymLabs.NSwag.FluentValidation;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -11,32 +7,32 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class DependencyInjection
 {
     public static IServiceCollection AddWebServices(this IServiceCollection services)
-    { 
+    {
         services.AddControllers();
 
         services.AddScoped(provider =>
         {
             var validationRules = provider.GetService<IEnumerable<FluentValidationRule>>();
-            var loggerFactory = provider.GetService<ILoggerFactory>(); 
+            var loggerFactory = provider.GetService<ILoggerFactory>();
             return new FluentValidationSchemaProcessor(provider, validationRules, loggerFactory);
         });
 
         // Customise default API behaviour
         services.Configure<ApiBehaviorOptions>(options =>
-            options.SuppressModelStateInvalidFilter = true); 
+            options.SuppressModelStateInvalidFilter = true);
 
         services.AddOpenApiDocument((configure, sp) =>
         {
             configure.Title = "PulseemCMS API";
 
             // Add the fluent validations schema processor
-            var fluentValidationSchemaProcessor = 
+            var fluentValidationSchemaProcessor =
                 sp.CreateScope().ServiceProvider.GetRequiredService<FluentValidationSchemaProcessor>();
 
-            configure.SchemaProcessors.Add(fluentValidationSchemaProcessor); 
+            configure.SchemaProcessors.Add(fluentValidationSchemaProcessor);
         });
 
         return services;
     }
- 
+
 }

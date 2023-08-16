@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using JetBrains.Annotations;
-using MediatR;
 using Microsoft.Extensions.Options;
 using PulseemCMS.Application.Clients.Commands.CreateClient;
 using PulseemCMS.Application.Clients.Commands.UpdateClient;
-using PulseemCMS.Application.Clients.Queries;
 using PulseemCMS.Application.Common.Interfaces;
 using PulseemCMS.Domain.AppSettings;
 using PulseemCMS.Domain.Entities;
@@ -88,6 +80,7 @@ public class ClientDbService : IClientDbService
         }
     }
 
+    //Validate and add an error condition if the client id doesnt exist?
     public async Task DeleteClientsAsync(long id)
     {
         using (SqlConnection con = new SqlConnection(_connectionString))
