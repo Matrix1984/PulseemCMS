@@ -193,7 +193,7 @@
           "cellphone": {
             "type": "string",
             "minLength": 1,
-            "pattern": "/(9725|05)[0-9]{8,8}/",
+            "pattern": "(9725|05)[0-9]{8,8}",
             "nullable": false
           },
           "email": {
@@ -206,7 +206,7 @@
           "clientName": {
             "type": "string",
             "minLength": 1,
-            "pattern": "/[A-Za-z]{1,100}/",
+            "pattern": "[A-Za-z]{1,100}",
             "nullable": false
           }
         }
@@ -240,7 +240,7 @@
           "cellphone": {
             "type": "string",
             "minLength": 1,
-            "pattern": "/(9725|05)[0-9]{8,8}/",
+            "pattern": "(9725|05)[0-9]{8,8}",
             "nullable": false
           },
           "email": {
@@ -253,7 +253,7 @@
           "clientName": {
             "type": "string",
             "minLength": 1,
-            "pattern": "/[A-Za-z]{1,100}/",
+            "pattern": "[A-Za-z]{1,100}",
             "nullable": false
           },
           "emailStatus": {
