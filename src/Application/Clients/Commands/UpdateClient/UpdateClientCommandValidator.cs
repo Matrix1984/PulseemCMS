@@ -1,24 +1,25 @@
-﻿namespace PulseemCMS.Application.Clients.Commands.UpdateClient;
+﻿using PulseemCMS.Domain.Common.Helpers.RegexValidators;
+
+namespace PulseemCMS.Application.Clients.Commands.UpdateClient;
 public class UpdateClientCommandValidator : AbstractValidator<UpdateClientCommand>
 {
     public UpdateClientCommandValidator()
     {
         RuleFor(v => v.ClientId)
-            .GreaterThanOrEqualTo(1); 
+            .GreaterThanOrEqualTo(1);
 
         RuleFor(v => v.Cellphone)
-          .MinimumLength(10)
-          .MaximumLength(12)
-         .NotEmpty(); 
+         .Matches(RegexValidatorHelper.PHONE_NUMBER_REG_VALIDATOR)
+         .NotEmpty();
 
         RuleFor(v => v.Email)
+         .EmailAddress()
          .MinimumLength(1)
-          .MaximumLength(500)
+         .MaximumLength(500)
          .NotEmpty();
-         
+
         RuleFor(v => v.ClientName)
-         .MinimumLength(1)
-         .MaximumLength(100) 
+         .Matches(RegexValidatorHelper.NAME_REG_VALIDATOR)
          .NotEmpty();
     }
 }

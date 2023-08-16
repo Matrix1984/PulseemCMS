@@ -3,7 +3,7 @@ using PulseemCMS.Application.Common.Interfaces;
 using PulseemCMS.Domain.Entities;
 
 namespace PulseemCMS.Application.Clients.Commands.CreateClient;
-public record CreateClientCommand(long ClientId, string Cellphone, string Email, string ClientName, bool EmailStatus, bool SmsStatus) : IRequest<CreateClientVM>;
+public record CreateClientCommand(string Cellphone, string Email, string ClientName) : IRequest<CreateClientVM>;
 
 public class CreateClientCommandHandler : IRequestHandler<CreateClientCommand, CreateClientVM>
 {
