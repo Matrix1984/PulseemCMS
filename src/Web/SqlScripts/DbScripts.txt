@@ -1,0 +1,185 @@
+USE [master]
+GO
+/****** Object:  Database [Pulseem]    Script Date: 17/08/2023 8:43:28 ******/
+CREATE DATABASE [Pulseem]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'Pulseem', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\Pulseem.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'Pulseem_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\Pulseem_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
+GO
+ALTER DATABASE [Pulseem] SET COMPATIBILITY_LEVEL = 160
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [Pulseem].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [Pulseem] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [Pulseem] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [Pulseem] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [Pulseem] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [Pulseem] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [Pulseem] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [Pulseem] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [Pulseem] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [Pulseem] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [Pulseem] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [Pulseem] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [Pulseem] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [Pulseem] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [Pulseem] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [Pulseem] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [Pulseem] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [Pulseem] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [Pulseem] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [Pulseem] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [Pulseem] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [Pulseem] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [Pulseem] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [Pulseem] SET RECOVERY FULL 
+GO
+ALTER DATABASE [Pulseem] SET  MULTI_USER 
+GO
+ALTER DATABASE [Pulseem] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [Pulseem] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [Pulseem] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [Pulseem] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+ALTER DATABASE [Pulseem] SET DELAYED_DURABILITY = DISABLED 
+GO
+ALTER DATABASE [Pulseem] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+EXEC sys.sp_db_vardecimal_storage_format N'Pulseem', N'ON'
+GO
+ALTER DATABASE [Pulseem] SET QUERY_STORE = ON
+GO
+ALTER DATABASE [Pulseem] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 30), DATA_FLUSH_INTERVAL_SECONDS = 900, INTERVAL_LENGTH_MINUTES = 60, MAX_STORAGE_SIZE_MB = 1000, QUERY_CAPTURE_MODE = AUTO, SIZE_BASED_CLEANUP_MODE = AUTO, MAX_PLANS_PER_QUERY = 200, WAIT_STATS_CAPTURE_MODE = ON)
+GO
+USE [Pulseem]
+GO
+/****** Object:  Table [dbo].[Clients]    Script Date: 17/08/2023 8:43:28 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Clients](
+	[ClientID] [bigint] IDENTITY(1,1) NOT NULL,
+	[Cellphone] [nvarchar](12) NOT NULL,
+	[Email] [varchar](500) NOT NULL,
+	[ClientName] [varchar](100) NOT NULL,
+	[EmailStatus] [bit] NOT NULL,
+	[SmsStatus] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ClientID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Email] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Clients] ADD  DEFAULT ((1)) FOR [EmailStatus]
+GO
+ALTER TABLE [dbo].[Clients] ADD  DEFAULT ((1)) FOR [SmsStatus]
+GO
+ALTER TABLE [dbo].[Clients]  WITH CHECK ADD CHECK  ((len([Cellphone])>=(10)))
+GO
+/****** Object:  StoredProcedure [dbo].[CreateClient]    Script Date: 17/08/2023 8:43:28 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ 
+CREATE PROCEDURE [dbo].[CreateClient]
+    @Cellphone varchar(12),
+    @Email varchar(500), 
+	@ClientName varchar(100),
+	@Id bigint OUTPUT
+AS
+BEGIN 
+ 
+	 IF EXISTS (SELECT 1 from Clients WHERE Email = @Email) 
+    	 RETURN -1; -- Email already exists status.  
+
+		DECLARE @ExistingCellphoneStatus bit = (SELECT top 1 SmsStatus FROM Clients WHERE Cellphone = @Cellphone); --- If you add a cellphone that exists in the DB, it should inherit its sms status
+
+		INSERT INTO Clients (Cellphone, ClientName, Email, SmsStatus)  
+		VALUES (@Cellphone,@ClientName ,  @Email, (SELECT IIF(@ExistingCellphoneStatus is not null, @ExistingCellphoneStatus, 1)))
+ 
+		 SET @Id=SCOPE_IDENTITY();
+
+		 RETURN 0;
+END 
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateClient]    Script Date: 17/08/2023 8:43:28 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ 
+CREATE PROCEDURE [dbo].[UpdateClient]
+	   @Cellphone vARCHAR(12),
+      @Email varchar(500),
+   @ClientName varchar(100),
+    @EmailStatus bit,
+    @SmsStatus bit,
+     @ClientId bigint 
+AS
+BEGIN 
+	
+	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+	SET NOCOUNT ON; 
+
+	BEGIN TRANSACTION; 
+
+    UPDATE Clients SET 
+    Cellphone = @Cellphone,
+    Email= @Email,
+    ClientName=@ClientName,
+    EmailStatus= @EmailStatus,
+    SmsStatus=@SmsStatus
+    WHERE ClientId=@ClientId
+	 
+
+		DECLARE @PhoneWithNoPrefix varchar(12) = IIF(LEFT(@Cellphone, 1)='0', SUBSTRING(@Cellphone,2,LEN(@Cellphone)),SUBSTRING(@Cellphone,4,LEN(@Cellphone)))
+
+	    UPDATE Clients SET  
+        SmsStatus=@SmsStatus
+        WHERE Cellphone LIKE CONCAT('%',@PhoneWithNoPrefix); 
+
+COMMIT TRANSACTION; 
+END
+GO
+USE [master]
+GO
+ALTER DATABASE [Pulseem] SET  READ_WRITE 
+GO
