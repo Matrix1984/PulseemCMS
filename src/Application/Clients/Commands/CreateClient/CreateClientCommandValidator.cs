@@ -16,7 +16,6 @@ public class CreateClientCommandValidator : AbstractValidator<CreateClientComman
          .NotEmpty();
 
         RuleFor(v => v.ClientName)
-         .Matches(RegexValidatorHelper.NAME_REG_VALIDATOR) 
-         .NotEmpty();
+         .Matches("^[A-Za-z]{1,100}$"); 
     }
 }
